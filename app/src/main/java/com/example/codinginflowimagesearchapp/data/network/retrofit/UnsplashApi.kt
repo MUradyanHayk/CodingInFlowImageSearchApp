@@ -3,10 +3,12 @@ package com.example.codinginflowimagesearchapp.data.network.retrofit
 import android.provider.ContactsContract.Contacts
 import com.example.codinginflowimagesearchapp.model.UnsplashPhotoResponse
 import com.example.codinginflowimagesearchapp.utils.Constants.CLIENT_ID
+import dagger.Provides
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.Query
+import javax.inject.Inject
 
 interface UnsplashApi {
     @Headers("Accept-Version: v1", "Authorization: Client-ID $CLIENT_ID")
