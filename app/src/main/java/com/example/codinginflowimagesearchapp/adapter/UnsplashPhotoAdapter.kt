@@ -10,19 +10,29 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.codinginflowimagesearchapp.R
 import com.example.codinginflowimagesearchapp.databinding.ItemUnsplashPhotoBinding
 import com.example.codinginflowimagesearchapp.model.UnsplashPhotoResult
+import java.lang.ref.WeakReference
 
-class UnsplashPhotoAdapter : PagingDataAdapter<UnsplashPhotoResult, UnsplashPhotoAdapter.PhotoViewHolder>(PHOTO_COMPARATOR) {
+interface UnsplashPhotoAdapterDelegate {
+    fun onItemClick(photo: UnsplashPhotoResult?)
+}
 
-    class PhotoViewHolder(private val binding: ItemUnsplashPhotoBinding) : RecyclerView.ViewHolder(binding.root) {
+class UnsplashPhotoAdapter(private val delegate: WeakReference<UnsplashPhotoAdapterDelegate>?) : PagingDataAdapter<UnsplashPhotoResult, UnsplashPhotoAdapter.PhotoViewHolder>(PHOTO_COMPARATOR) {
+
+    inner class PhotoViewHolder(private val binding: ItemUnsplashPhotoBinding) : RecyclerView.ViewHolder(binding.root) {
+
         fun bind(photo: UnsplashPhotoResult) {
             Glide.with(binding.root.context)
-                .load(photo.urls.regular)
+                .load(photo.urls?.regular)
                 .centerCrop()
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .error(R.drawable.ic_error)
                 .into(binding.imageView)
 
-            binding.textViewUserName.text = photo.user.name
+            binding.textViewUserName.text = photo.user?.name ?: ""
+
+            binding.root.setOnClickListener {
+                delegate?.get()?.onItemClick(photo)
+            }
         }
     }
 
