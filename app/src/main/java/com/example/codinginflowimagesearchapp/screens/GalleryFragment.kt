@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.example.codinginflowimagesearchapp.R
 import com.example.codinginflowimagesearchapp.adapter.UnsplashPhotoAdapter
+import com.example.codinginflowimagesearchapp.adapter.UnsplashPhotoLoadStateAdapter
 import com.example.codinginflowimagesearchapp.databinding.FragmentGalleryBinding
 import com.example.codinginflowimagesearchapp.viewModel.GalleryViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -16,7 +17,6 @@ import dagger.hilt.android.AndroidEntryPoint
 class GalleryFragment : Fragment() {
     private lateinit var binding: FragmentGalleryBinding
     private val viewModel: GalleryViewModel by viewModels()
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,7 +32,10 @@ class GalleryFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val adapter = UnsplashPhotoAdapter()
         binding.recyclerView.setHasFixedSize(true)
-        binding.recyclerView.adapter = adapter
+        binding.recyclerView.adapter = adapter.withLoadStateHeaderAndFooter(
+            header = UnsplashPhotoLoadStateAdapter { adapter.retry() },
+            footer = UnsplashPhotoLoadStateAdapter { adapter.retry() }
+        )
 
         viewModel.photos.observe(viewLifecycleOwner) {
             adapter.submitData(viewLifecycleOwner.lifecycle, it)
